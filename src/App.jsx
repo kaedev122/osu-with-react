@@ -1,20 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const windowWidth = useRef(window.innerWidth);
+  const windowHeight = useRef(window.innerHeight);
+  
+  const [score, setScore] = useState(0)
+  const [highScore, setHighScore] = useState(0)
   const [mouseOnCircle, setMouseOnCircle] = useState(false)
   const [position, setPosition] = useState({
-    width: `${Math.floor(Math.random() * 1820)}px`,
-    height: `${Math.floor(Math.random() * 700)}px`
+    width: `${Math.floor(Math.random() * (windowWidth.current - 300))}px`,
+    height: `${Math.floor(Math.random() * (windowHeight.current - 200))}px`
   })
 
   const handleClickCircle = () => {
-    setCount((count) => count + 1)
-    let width = `${Math.floor(Math.random() * 1820)}px`
-    let height = `${Math.floor(Math.random() * 700)}px`
+    setScore((score) => score + 1)
+    let width = `${Math.floor(Math.random() * (windowWidth.current - 300))}px`
+    let height = `${Math.floor(Math.random() * (windowHeight.current - 200))}px`
     console.log(width, height)
+    console.log(windowWidth, windowHeight)
     setPosition({
       width: width, 
       height: height
@@ -26,9 +31,13 @@ function App() {
 
   useEffect(() => {
     if (counter === -1) {
+      if (score > highScore) {
+        setHighScore(score)
+      }
+      setScore(0)
       setStart(false)
       setCounter(15)
-      alert(`Your score: ${count}`)
+      alert(`Your score: ${score}`)
     }
     const timer = 
       start && counter > -1 && setInterval(() => setCounter(counter - 1), 1000);
@@ -40,9 +49,9 @@ function App() {
       if (mouseOnCircle) {
         handleClickCircle()
       } else {
-        if (count === 0)
+        if (score === 0)
           return
-        setCount(count - 1)
+          setScore(score - 1)
       }
     }
   };
@@ -69,14 +78,14 @@ function App() {
           top: `${position.height}`
         }}
       >
-        <span className="fs-25">{count}</span>
+        <span className="fs-25">{score}</span>
       </div> }
       <div 
         className='information-layout d-flex flex-column align-items-center justify-content-center'
       >
         <button onClick={() => setStart(true)}>Start</button>
         <span>Time: {counter}</span>
-        <span>Score: {count}</span>
+        <span>Score: {score} | High score: {highScore}</span>
       </div>
     </div>
   )
